@@ -29,7 +29,7 @@ public class ResourceService {
         user.consumeResource(1);
 
         resourceRepository.save(user);
-        log.info("User {} 자원 {} 만큼 소비, 남은 자원: {}", userId, user.getRemainingResources());
+        log.info("User {} 자원 1 사용, 남은 자원: {}", userId, user.getRemainingResources());
         return ResponseEntity.ok("자원 소비. 남은 자원: " + user.getRemainingResources());
     }
 
