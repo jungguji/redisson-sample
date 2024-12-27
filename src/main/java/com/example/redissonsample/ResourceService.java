@@ -18,6 +18,7 @@ public class ResourceService {
     private final ResourceRepository resourceRepository;
 
     public ResponseEntity<String> consumeResource(int userId) {
+
         Optional<User> userOpt = resourceRepository.findById(userId);
         try {
             Thread.sleep(100); // 100ms 지연
