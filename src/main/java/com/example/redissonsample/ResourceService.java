@@ -2,12 +2,15 @@ package com.example.redissonsample;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -17,8 +20,8 @@ public class ResourceService {
 
     private final ResourceRepository resourceRepository;
 
-    public ResponseEntity<String> consumeResource(int userId) {
 
+    public int consumeResource(int userId) {
         Optional<User> userOpt = resourceRepository.findById(userId);
         try {
             Thread.sleep(100); // 100ms 지연
@@ -28,10 +31,12 @@ public class ResourceService {
 
         User user = userOpt.get();
         user.consumeResource(1);
+        int remainingResources = user.getRemainingResources();
 
         resourceRepository.save(user);
-        log.info("User {} 자원 1 사용, 남은 자원: {}", userId, user.getRemainingResources());
-        return ResponseEntity.ok("자원 소비. 남은 자원: " + user.getRemainingResources());
+
+        log.info("User {} 자원 1 사용, 남은 자원: {}", userId, remainingResources);
+        return remainingResources;
     }
 
     public ResponseEntity<List<String>> getResourceStatus() {
